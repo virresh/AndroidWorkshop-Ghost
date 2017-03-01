@@ -123,6 +123,18 @@ public class GhostActivity extends AppCompatActivity {
          **  YOUR CODE GOES HERE
          **
          **/
+        Log.i("OnKey Method",""+keyCode + " "+  (char)keyCode);
+        // event.unicodetochar()
+        int c = event.getUnicodeChar();
+        Log.i("OnKey Method",""+c + " "+  (char)c);
+        if((c >= (int)('a') && c <= (int)('z'))){
+            String s = ((TextView)findViewById(R.id.ghostText)).getText().toString();
+            s += ""+(char)c;
+            if(d.isWord(s)){
+                ((TextView)findViewById(R.id.gameStatus)).setText("Valid Word Formed");
+            }
+            ((TextView) findViewById(R.id.ghostText)).setText(s);
+        }
         return super.onKeyUp(keyCode, event);
     }
 }
