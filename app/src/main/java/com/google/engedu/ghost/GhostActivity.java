@@ -106,6 +106,18 @@ public class GhostActivity extends AppCompatActivity {
     private void computerTurn() {
         TextView label = (TextView) findViewById(R.id.gameStatus);
         // Do computer turn stuff then make it the user's turn again
+        userTurn = false;
+        label.setText(COMPUTER_TURN);
+
+        String s = ((TextView)findViewById(R.id.ghostText)).getText().toString();
+        if(d.isWord(s) && s.length()>=4){
+            label.setText("Computer Wins. You made a valid Word !!!");
+        }
+        else{
+            String p = d.getAnyWordStartingWith(s);
+            addToTextView(p.substring(s.length(),s.length()+1));
+        }
+
         userTurn = true;
         label.setText(USER_TURN);
     }
@@ -134,7 +146,15 @@ public class GhostActivity extends AppCompatActivity {
                 ((TextView)findViewById(R.id.gameStatus)).setText("Valid Word Formed");
             }
             ((TextView) findViewById(R.id.ghostText)).setText(s);
+//            computerTurn();
         }
         return super.onKeyUp(keyCode, event);
+    }
+
+
+    private void addToTextView(String p){
+        String s = ((TextView)findViewById(R.id.ghostText)).getText().toString();
+        s += p;
+        ((TextView)findViewById(R.id.ghostText)).setText(s);
     }
 }
