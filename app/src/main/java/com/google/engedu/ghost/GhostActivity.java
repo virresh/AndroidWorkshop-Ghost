@@ -27,6 +27,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -58,9 +60,26 @@ public class GhostActivity extends AppCompatActivity {
             d = null;
             Log.e("message",e.getMessage());
         }
-        onStart(null);
+
+        if (savedInstanceState != null) {
+            TextView t = (TextView)findViewById(R.id.ghostText);
+            TextView g = (TextView)findViewById(R.id.gameStatus);
+            t.setText(savedInstanceState.getCharSequence("WordStatus"));
+            g.setText(savedInstanceState.getCharSequence("GameStatus"));
+        }
+        else {
+            onStart(null);
+        }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outstate){
+        super.onSaveInstanceState(outstate);
+        TextView t = (TextView)findViewById(R.id.ghostText);
+        TextView g = (TextView)findViewById(R.id.gameStatus);
+        outstate.putCharSequence("WordStatus",t.getText());
+        outstate.putCharSequence("GameStatus",g.getText());
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -115,11 +134,17 @@ public class GhostActivity extends AppCompatActivity {
         }
         else{
             String p = d.getAnyWordStartingWith(s);
-            addToTextView(p.substring(s.length(),s.length()+1));
+            if(p!=null) {
+                addToTextView(p.substring(s.length(), s.length() + 1));
+                label.setText(USER_TURN);
+                Log.i("Word : ",p);
+                userTurn = true;
+            }
+            else{
+                label.setText("You Lose. No more Valid Words possible !!!");
+                Log.i("Word : ","NULL");
+            }
         }
-
-        userTurn = true;
-        label.setText(USER_TURN);
     }
 
     /**
@@ -135,22 +160,37 @@ public class GhostActivity extends AppCompatActivity {
          **  YOUR CODE GOES HERE
          **
          **/
-        Log.i("OnKey Method",""+keyCode + " "+  (char)keyCode);
         // event.unicodetochar()
         int c = event.getUnicodeChar();
         Log.i("OnKey Method",""+c + " "+  (char)c);
-        if((c >= (int)('a') && c <= (int)('z'))){
+        if((c >= (int)('a') && c <= (int)('z')) && userTurn == true){
             String s = ((TextView)findViewById(R.id.ghostText)).getText().toString();
             s += ""+(char)c;
-            if(d.isWord(s)){
-                ((TextView)findViewById(R.id.gameStatus)).setText("Valid Word Formed");
-            }
+//            if(d.isWord(s)){
+//                ((TextView)findViewById(R.id.gameStatus)).setText("Valid Word Formed");
+//            }
             ((TextView) findViewById(R.id.ghostText)).setText(s);
-//            computerTurn();
+            computerTurn();
         }
         return super.onKeyUp(keyCode, event);
     }
 
+    public void challenge(View view){
+        TextView tv = ((TextView)findViewById(R.id.ghostText));
+        TextView label = (TextView) findViewById(R.id.gameStatus);
+        String s = tv.getText().toString();
+        String y = d.getAnyWordStartingWith(s);
+        if(d.isWord(s) && s.length()>=4){
+            label.setText("You Win !!!!\nIt is indeed a valid word.");
+        }
+        else if(y!=null){
+            label.setText("You Lose.\nOne possible word could be "+y);
+        }
+        else{
+            label.setText("You Win !!!!\nNo valid words can be made now.");
+        }
+        userTurn = false;
+    }
 
     private void addToTextView(String p){
         String s = ((TextView)findViewById(R.id.ghostText)).getText().toString();

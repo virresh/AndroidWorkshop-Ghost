@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 
 public class SimpleDictionary implements GhostDictionary {
@@ -42,12 +43,35 @@ public class SimpleDictionary implements GhostDictionary {
 
     @Override
     public String getAnyWordStartingWith(String prefix) {
-        return null;
+        int low = 0;
+        int high = words.size()-1;
+        int mid;
+        String sampleWord = null;
+        while(low < high){
+            mid = (low+high)/2;
+            String p = words.get(mid);
+            int x = p.compareTo(prefix);
+
+            if(p.startsWith(prefix)){
+                sampleWord = p;
+            }
+
+            if(x < 0) {
+                //later half
+                low = mid + 1;
+            }
+            else{
+                //previous half
+                high = mid;
+            }
+        }
+        return sampleWord;
     }
 
     @Override
     public String getGoodWordStartingWith(String prefix) {
         String selected = null;
+        //implementation left
         return selected;
     }
 }
