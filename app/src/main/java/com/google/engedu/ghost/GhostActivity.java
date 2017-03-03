@@ -24,6 +24,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,7 @@ public class GhostActivity extends AppCompatActivity {
     private boolean userTurn = false;
     private Random random = new Random();
     private SimpleDictionary d;
+    private int score;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +66,13 @@ public class GhostActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             TextView t = (TextView)findViewById(R.id.ghostText);
             TextView g = (TextView)findViewById(R.id.gameStatus);
+            TextView s = (TextView)findViewById(R.id.scoreTextView);
             t.setText(savedInstanceState.getCharSequence("WordStatus"));
             g.setText(savedInstanceState.getCharSequence("GameStatus"));
+            s.setText(savedInstanceState.getCharSequence("Score"));
         }
         else {
+            score = 0;
             onStart(null);
         }
     }
@@ -77,8 +82,10 @@ public class GhostActivity extends AppCompatActivity {
         super.onSaveInstanceState(outstate);
         TextView t = (TextView)findViewById(R.id.ghostText);
         TextView g = (TextView)findViewById(R.id.gameStatus);
+        TextView s = (TextView)findViewById(R.id.scoreTextView);
         outstate.putCharSequence("WordStatus",t.getText());
         outstate.putCharSequence("GameStatus",g.getText());
+        outstate.putCharSequence("Score",g.getText());
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -145,6 +152,7 @@ public class GhostActivity extends AppCompatActivity {
                 Log.i("Word : ","NULL");
             }
         }
+        updateScore();
     }
 
     /**
@@ -176,19 +184,25 @@ public class GhostActivity extends AppCompatActivity {
     }
 
     public void challenge(View view){
+        if(!userTurn){
+            return;
+        }
         TextView tv = ((TextView)findViewById(R.id.ghostText));
         TextView label = (TextView) findViewById(R.id.gameStatus);
         String s = tv.getText().toString();
         String y = d.getAnyWordStartingWith(s);
         if(d.isWord(s) && s.length()>=4){
             label.setText("You Win !!!!\nIt is indeed a valid word.");
+            score++;
         }
         else if(y!=null){
             label.setText("You Lose.\nOne possible word could be "+y);
         }
         else{
             label.setText("You Win !!!!\nNo valid words can be made now.");
+            score++;
         }
+        updateScore();
         userTurn = false;
     }
 
@@ -196,5 +210,10 @@ public class GhostActivity extends AppCompatActivity {
         String s = ((TextView)findViewById(R.id.ghostText)).getText().toString();
         s += p;
         ((TextView)findViewById(R.id.ghostText)).setText(s);
+    }
+
+    private void updateScore(){
+        TextView s = (TextView)findViewById(R.id.scoreTextView);
+        s.setText("Score : "+score);
     }
 }
