@@ -16,6 +16,7 @@
 package com.google.engedu.ghost;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 
 public class TrieNode {
@@ -28,14 +29,74 @@ public class TrieNode {
     }
 
     public void add(String s) {
+        int i;
+        TrieNode temp=null;
+        for(i=1; i<s.length(); i++){
+            TrieNode temp2 = children.get(s.substring(0,i));
+            if(temp2 !=null){
+                temp= temp2;
+            }
+            else{
+                break;
+            }
+        }
+        if(i==s.length()){
+            temp.isWord = true;
+            return;
+        }
+
+        TrieNode prev=temp;
+        TrieNode next = null;
+        for(int j=i; j<s.length(); j++){
+            next = new TrieNode();
+            if (prev != null) {
+                prev.children.put(s.substring(0, j), next);
+                prev = next;
+            }
+        }
+        prev.isWord= true;
     }
 
     public boolean isWord(String s) {
-      return false;
+        int i=0;
+        TrieNode temp=null;
+        for(i=1; i<s.length(); i++){
+            TrieNode temp2 = children.get(s.substring(0,i));
+            if(temp2 !=null){
+                temp= temp2;
+            }
+            else{
+                break;
+            }
+        }
+        if(temp!=null) {
+            return temp.isWord;
+        }
+        else{
+            return false;
+        }
     }
 
     public String getAnyWordStartingWith(String s) {
-        return null;
+        TrieNode temp=null;
+        int i=0;
+        for(i=1; i<s.length(); i++){
+            TrieNode temp2 = children.get(s.substring(0,i));
+            if(temp2 !=null){
+                temp= temp2;
+            }
+            else{
+                break;
+            }
+        }
+        String y =null;
+        if(temp!=null) {
+            for (String x : temp.children.keySet()) {
+                y = x;
+                break;
+            }
+        }
+        return y;
     }
 
     public String getGoodWordStartingWith(String s) {

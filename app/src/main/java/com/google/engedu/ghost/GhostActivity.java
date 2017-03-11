@@ -85,7 +85,7 @@ public class GhostActivity extends AppCompatActivity {
         TextView s = (TextView)findViewById(R.id.scoreTextView);
         outstate.putCharSequence("WordStatus",t.getText());
         outstate.putCharSequence("GameStatus",g.getText());
-        outstate.putCharSequence("Score",g.getText());
+        outstate.putCharSequence("Score",s.getText());
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -140,7 +140,7 @@ public class GhostActivity extends AppCompatActivity {
             label.setText("Computer Wins. You made a valid Word !!!");
         }
         else{
-            String p = d.getAnyWordStartingWith(s);
+            String p = d.getGoodWordStartingWith(s);
             if(p!=null) {
                 addToTextView(p.substring(s.length(), s.length() + 1));
                 label.setText(USER_TURN);
