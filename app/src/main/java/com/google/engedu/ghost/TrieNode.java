@@ -17,6 +17,7 @@ package com.google.engedu.ghost;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
@@ -130,8 +131,46 @@ public class TrieNode {
     }
 
     public String getGoodWordStartingWith(String s) {
-        //Log.i("Trie Word Function - ", isWord("ban")+"");
-        return getAnyWordStartingWith(s);
-        //return null;
+        //Traverse the Trie starting from root till the TrieNode of prefix S
+        TrieNode temp=this;
+        for(int i=1; i<=s.length(); i++){
+            //Log.i("isWord: ",s.substring(0,i));
+            TrieNode temp2 = temp.children.get(s.substring(0,i));
+            if(temp2 ==null){
+                //no further words can exist.
+                return null;
+            }
+            temp=temp2;
+        }
+        //now we need to traverse the trie so that the word is not complete.
+        Random r = new Random();
+
+        ArrayList<String> good = new ArrayList<>();
+        ArrayList<String> bad = new ArrayList<>();
+
+        int k = temp.children.size();
+        if(k==0){
+            //no word possible
+            return null;
+        }
+        String y = null;
+        for (String t:temp.children.keySet()){
+            if(!temp.children.get(t).isWord){
+                good.add(t);
+            }
+            else{
+                bad.add(t);
+            }
+        }
+        if(good.size() == 0){
+            int q = r.nextInt(bad.size());
+            y = bad.get(q);
+        }
+        else{
+            int q = r.nextInt(good.size());
+            y = good.get(q);
+        }
+        //return getAnyWordStartingWith(s);
+        return y;
     }
 }
