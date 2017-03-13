@@ -15,8 +15,11 @@
 
 package com.google.engedu.ghost;
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Random;
 
 
 public class TrieNode {
@@ -28,78 +31,107 @@ public class TrieNode {
         isWord = false;
     }
 
-    public void add(String s) {
-        int i;
-        TrieNode temp=null;
-        for(i=1; i<s.length(); i++){
-            TrieNode temp2 = children.get(s.substring(0,i));
-            if(temp2 !=null){
-                temp= temp2;
-            }
-            else{
-                break;
-            }
+    public void printSet(HashMap<String,TrieNode> x){
+        for (String t:x.keySet() ) {
+            System.out.println(t);
         }
-        if(i==s.length()){
-            temp.isWord = true;
-            return;
-        }
+    }
 
-        TrieNode prev=temp;
-        TrieNode next = null;
-        for(int j=i; j<s.length(); j++){
-            next = new TrieNode();
-            if (prev != null) {
-                prev.children.put(s.substring(0, j), next);
-                prev = next;
+    public void add(String s) {
+        TrieNode temp = this;
+        for(int i=1; i<=s.length(); i++){
+            String x = s.substring(0,i);
+            TrieNode temp2 = temp.children.get(x);
+            if(temp2 == null){
+                //the node doesn't exist. Add it.
+                temp2 = new TrieNode();
+                temp.children.put(x,temp2);
             }
+            //if the word is complete, break out of the loop and mark it's ending.
+            if(i==s.length()){
+                //word is complete. Mark it as it a complete word.
+                temp2.isWord = true;
+                //Log.i("Add function: ", x);
+            }
+            //traverse further down the Trie.
+            temp = temp2;
         }
-        prev.isWord= true;
     }
 
     public boolean isWord(String s) {
         int i=0;
-        TrieNode temp=null;
-        for(i=1; i<s.length(); i++){
-            TrieNode temp2 = children.get(s.substring(0,i));
-            if(temp2 !=null){
-                temp= temp2;
-            }
-            else{
-                break;
-            }
-        }
-        if(temp!=null) {
-            return temp.isWord;
-        }
-        else{
+        if(s==""){
             return false;
         }
+        TrieNode temp=this;
+        boolean res = false;
+        for(i=1; i<=s.length(); i++){
+            //Log.i("isWord: ",s.substring(0,i));
+            TrieNode temp2 = temp.children.get(s.substring(0,i));
+            if(temp2 ==null){
+                res = false;
+                break;
+            }
+            else if(temp2.isWord && i==s.length()){
+                res = true;
+            }
+            temp=temp2;
+        }
+        return res;
     }
 
     public String getAnyWordStartingWith(String s) {
-        TrieNode temp=null;
-        int i=0;
-        for(i=1; i<s.length(); i++){
-            TrieNode temp2 = children.get(s.substring(0,i));
+        Random r = new Random();
+        if(s==""){
+            //choose any word to start with
+            int y= r.nextInt(27) + (int)'a';
+            Log.i("Random letter:",""+(char)y);
+            return ""+(char)y;
+        }
+        TrieNode temp = this;
+        int i;
+        for(i=1; i<=s.length(); i++){
+            TrieNode temp2 = temp.children.get(s.substring(0,i));
             if(temp2 !=null){
+                //traverse down
                 temp= temp2;
             }
             else{
-                break;
+                //the child doesn't exist. Thus the sequence has to be invalid.
+                return null;
             }
         }
-        String y =null;
-        if(temp!=null) {
-            for (String x : temp.children.keySet()) {
-                y = x;
-                break;
+        // At this point temp is the node that points to further strings. So traverse further to find a word and return it.
+        String ans = ""+s;
+        while(true){
+            TrieNode temp2 = new TrieNode();
+            if(temp.children.size()==0){
+                //no further word possible
+                return null;
+            }
+            int z = r.nextInt(temp.children.size());
+            int iterationNum=0;
+            for (String t : temp.children.keySet()) {
+                //this loop randomly selects a child
+                if(iterationNum == z){
+                    ans = t;
+                    break;
+                }
+                iterationNum ++;
+            }
+            if(temp.children.get(ans).isWord){
+                Log.i("Get Word : ",ans);
+                return ans;
+            }
+            else{
+                temp=temp.children.get(ans);
             }
         }
-        return y;
     }
 
     public String getGoodWordStartingWith(String s) {
-        return null;
+        //Log.i("Trie Word Function - ", isWord("ban")+"");
+        return getAnyWordStartingWith(s);
+        //return null;
     }
 }

@@ -42,7 +42,7 @@ public class GhostActivity extends AppCompatActivity {
     private GhostDictionary dictionary;
     private boolean userTurn = false;
     private Random random = new Random();
-    private SimpleDictionary d;
+    private FastDictionary d;
     private int score;
 
     @Override
@@ -56,7 +56,7 @@ public class GhostActivity extends AppCompatActivity {
          **
          **/
         try{
-            d = new SimpleDictionary(getAssets().open("words.txt"));
+            d = new FastDictionary(getAssets().open("words.txt"));
         }
         catch (IOException e){
             d = null;
