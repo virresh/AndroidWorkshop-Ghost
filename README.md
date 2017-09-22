@@ -1,6 +1,6 @@
 # AndroidWorkshop-Ghost
 
-Android app for the game Ghost.
+Android app for the game Ghost: https://en.wikipedia.org/wiki/Ghost_(game)
 
 Currently only Single Player
 
